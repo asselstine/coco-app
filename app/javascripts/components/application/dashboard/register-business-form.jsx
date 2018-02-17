@@ -13,6 +13,7 @@ export class RegisterBusinessForm extends Component {
 
   onSubmit (e) {
     e.preventDefault()
+    this.props.onSubmit(this.state.name, this.state.percentage)
   }
 
   render () {
@@ -21,7 +22,7 @@ export class RegisterBusinessForm extends Component {
         <div className='field'>
           <label className='label'>Name</label>
           <div className='control'>
-            <input className='input' type='number' value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })}/>
+            <input className='input' type='text' value={this.state.name} onChange={(e) => this.setState({ name: e.target.value })}/>
           </div>
         </div>
         <div className='field'>

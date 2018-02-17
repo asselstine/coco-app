@@ -11,12 +11,17 @@ import _ from 'lodash'
 import { Ether } from '../../ether'
 import formatCoco from '../../../format-coco'
 import listenDeposits from '../../../services/listen-deposits'
+import registerBusiness from '../../../services/register-business'
+import getBusinessCount from '../../../services/get-business-count'
+import listenBusinesses from '../../../services/listen-businesses'
 import { RegisterBusinessForm } from './register-business-form'
+import { BusinessRow } from './business-row'
 
 export const Dashboard = connect(
   (state, ownProps) => {
     return {
-      balance: _.get(state, `accounts[${web3.eth.accounts[0]}].balance`) || 0
+      balance: _.get(state, `accounts[${web3.eth.accounts[0]}].balance`) || 0,
+      businessCount: _.get(state, `businesses.count`) || 0
     }
   }
 )(class extends Component {
@@ -31,7 +36,9 @@ export const Dashboard = connect(
 
   componentDidMount () {
     getBalance(web3.eth.accounts[0])
+    getBusinessCount()
     listenDeposits()
+    listenBusinesses()
   }
 
   onBuy () {
@@ -65,15 +72,22 @@ export const Dashboard = connect(
     })
   }
 
+  registerBusiness (name, percentage) {
+    registerBusiness(name, percentage)
+    this.closeModal()
+  }
+
   render () {
     return (
       <div>
         <nav className='background-brand navbar' role='navigation' aria-label='main navigation'>
-          <div className="navbar-menu">
-            <div className='navbar-brand'>
-              <a className="navbar-item" href="/">
-                <img src='/images/coco-brand--full-white.png' alt='Coco' />
-              </a>
+          <div className='container'>
+            <div className='navbar-start'>
+              <div className='navbar-brand'>
+                <a className="navbar-item" href="/">
+                  <img src='/images/coco-brand--full-white.png' alt='Coco' />
+                </a>
+              </div>
             </div>
             <div className='navbar-end'>
               <div className='navbar-item'>
@@ -108,20 +122,13 @@ export const Dashboard = connect(
           </div>
         </Modal>
 
-        <Modal isOpen={this.state.showBuyModal} onClose={this.closeModal.bind(this)}>
+        <Modal isOpen={this.state.showRegisterBusinessModal} onClose={this.closeModal.bind(this)}>
           <div className='box'>
             <h1 className='title'>Register Business</h1>
-            <RegisterBusinessForm onSubmit={this.onRegisterBusiness.bind(this)}/>
+            <RegisterBusinessForm onSubmit={this.registerBusiness.bind(this)}/>
           </div>
         </Modal>
 
-        <section className='hero is-bold'>
-          <div className="hero-body">
-            <div className="container has-text-centered">
-              <img src='/images/coco-brand--dark-on-white.png' alt='Coco' />
-            </div>
-          </div>
-        </section>
         <section className='section'>
           <div className='container'>
             <nav className='level'>
@@ -130,10 +137,19 @@ export const Dashboard = connect(
                   <p className='heading'>Your Balance</p>
                   <p className='title'>{formatCoco(this.props.balance)}</p>
                   <br />
-                  <button className='button is-primary is-large' onClick={this.onBuy.bind(this)}>Buy</button>
+                  <button className='button is-primary' onClick={this.onBuy.bind(this)}>Buy More</button>
                 </div>
               </div>
             </nav>
+          </div>
+        </section>
+
+        <section className='section'>
+          <div className='container has-text-centered'>
+            <p className='title'>Participating Businesses</p>
+            {_.range(this.props.businessCount.toString()).map((index) => {
+              return <BusinessRow index={index} key={index} />
+            })}
           </div>
         </section>
       </div>
