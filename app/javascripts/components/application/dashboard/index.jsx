@@ -12,16 +12,22 @@ import { Ether } from '../../ether'
 import formatCoco from '../../../format-coco'
 import listenDeposits from '../../../services/listen-deposits'
 import registerBusiness from '../../../services/register-business'
+import newCause from '../../../services/new-cause'
 import getBusinessCount from '../../../services/get-business-count'
+import getCausesCount from '../../../services/get-causes-count'
 import listenBusinesses from '../../../services/listen-businesses'
+import listenCauses from '../../../services/listen-causes'
 import { RegisterBusinessForm } from './register-business-form'
 import { BusinessRow } from './business-row'
+import { CauseRow } from './cause-row'
+import { NewCauseForm } from './new-cause-form'
 
 export const Dashboard = connect(
   (state, ownProps) => {
     return {
       balance: _.get(state, `accounts[${web3.eth.accounts[0]}].balance`) || 0,
-      businessCount: _.get(state, `businesses.count`) || 0
+      businessCount: _.get(state, `businesses.count`) || 0,
+      causeCount: _.get(state, `causes.count`) || 0
     }
   }
 )(class extends Component {
@@ -30,6 +36,7 @@ export const Dashboard = connect(
     this.state = {
       showBuyModal: false,
       showRegisterBusinessModal: false,
+      showNewCauseModal: false,
       buyAmount: 0
     }
   }
@@ -37,8 +44,10 @@ export const Dashboard = connect(
   componentDidMount () {
     getBalance(web3.eth.accounts[0])
     getBusinessCount()
+    getCausesCount()
     listenDeposits()
     listenBusinesses()
+    listenCauses()
   }
 
   onBuy () {
@@ -51,7 +60,8 @@ export const Dashboard = connect(
   closeModal () {
     this.setState({
       showBuyModal: false,
-      showRegisterBusinessModal: false
+      showRegisterBusinessModal: false,
+      showNewCauseModal: false
     })
   }
 
@@ -72,8 +82,19 @@ export const Dashboard = connect(
     })
   }
 
+  onNewCause () {
+    this.setState({
+      showNewCauseModal: true
+    })
+  }
+
   registerBusiness (name, percentage) {
     registerBusiness(name, percentage)
+    this.closeModal()
+  }
+
+  newCause (name) {
+    newCause(name)
     this.closeModal()
   }
 
@@ -90,6 +111,15 @@ export const Dashboard = connect(
               </div>
             </div>
             <div className='navbar-end'>
+              <div className='navbar-item'>
+                <div className="field is-grouped">
+                  <p className="control">
+                    <a className='button is-danger is-outlined is-inverted' href='javascript:;' onClick={this.onNewCause.bind(this)}>
+                      New Cause
+                    </a>
+                  </p>
+                </div>
+              </div>
               <div className='navbar-item'>
                 <div className="field is-grouped">
                   <p className="control">
@@ -129,6 +159,13 @@ export const Dashboard = connect(
           </div>
         </Modal>
 
+        <Modal isOpen={this.state.showNewCauseModal} onClose={this.closeModal.bind(this)}>
+          <div className='box'>
+            <h1 className='title'>New Cause</h1>
+            <NewCauseForm onSubmit={this.newCause.bind(this)} />
+          </div>
+        </Modal>
+
         <section className='section'>
           <div className='container'>
             <nav className='level'>
@@ -146,9 +183,18 @@ export const Dashboard = connect(
 
         <section className='section'>
           <div className='container has-text-centered'>
-            <p className='title'>Participating Businesses</p>
+            <p className='title'>Businesses</p>
             {_.range(this.props.businessCount.toString()).map((index) => {
               return <BusinessRow index={index} key={index} />
+            })}
+          </div>
+        </section>
+
+        <section className='section'>
+          <div className='container has-text-centered'>
+            <p className='title'>Causes</p>
+            {_.range(this.props.causeCount.toString()).map((index) => {
+              return <CauseRow index={index} key={index} />
             })}
           </div>
         </section>

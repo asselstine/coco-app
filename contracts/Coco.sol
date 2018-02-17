@@ -5,6 +5,7 @@ contract Coco {
 
   event Deposited(address indexed user, uint amount);
   event BusinessRegistered(address indexed owner, uint index, string name, uint percentage);
+  event NewCause(uint index, string name);
 
   struct Business {
     string name;
@@ -13,6 +14,12 @@ contract Coco {
 
   mapping (address => uint) ownersToBusinessIndex;
   Business[] businesses;
+
+  struct Cause {
+    string name;
+  }
+
+  Cause[] causes;
 
   function balance(address account) external view returns(uint) {
     return balances[account];
@@ -27,6 +34,23 @@ contract Coco {
      uint index = businesses.push(Business(name, percentage));
      ownersToBusinessIndex[msg.sender] = index;
      BusinessRegistered(msg.sender, index, name, percentage);
+  }
+
+  function newCause(string name) external {
+    uint index = causes.push(Cause(name));
+    NewCause(index, name);
+  }
+
+  function getCausesCount() external view returns (uint) {
+    return causes.length;
+  }
+
+  function getCause(uint index) external view returns (uint, string) {
+    Cause storage cause = causes[index];
+    return (
+      index,
+      cause.name
+    );
   }
 
   function getBusinessesCount() external view returns (uint) {

@@ -31,4 +31,14 @@ contract('Coco', function (accounts) {
       assert.equal(biz[1], 1)
     })
   })
+
+  describe('newCause()', function () {
+    it('allows a user to create a cause', async function () {
+      await coco.newCause('Bizzy', { from: businessAddress })
+      assert.equal(await coco.getCausesCount(), 1)
+      var biz = await coco.getCause(0)
+      assert.equal(biz[0], 0)
+      assert.equal(biz[1], 'Bizzy')
+    })
+  })
 })
