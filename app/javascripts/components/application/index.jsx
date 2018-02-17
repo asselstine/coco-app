@@ -5,25 +5,11 @@ import {
   Switch
 } from 'react-router-dom'
 
-import { Login } from './login'
+import { Dashboard } from './dashboard'
 
 export const Application = () => {
   if (window.web3 && web3.eth.accounts.length) {
-    var contents =
-      <div>
-        <section className='hero is-primary is-bold'>
-          <div className="hero-body">
-            <div className="container">
-              <h1 className="title">
-                Coco
-              </h1>
-            </div>
-          </div>
-        </section>
-        <Switch>
-          <Route path='/' component={Login} />
-        </Switch>
-      </div>
+    var contents = <Dashboard />
   } else if (window.web3) {
     contents =
       <section className="hero is-fullheight">
