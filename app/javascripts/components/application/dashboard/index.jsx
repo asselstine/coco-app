@@ -1,14 +1,17 @@
+require('./dashboard.css')
+
 import React, {
   Component
 } from 'react'
-import { Modal } from '../modal'
-import buyCoco from '../../services/buy-coco'
-import getBalance from '../../services/get-balance'
+import { Modal } from '../../modal'
+import buyCoco from '../../../services/buy-coco'
+import getBalance from '../../../services/get-balance'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import { Ether } from '../ether'
-import formatCoco from '../../format-coco'
-import listenDeposits from '../../services/listen-deposits'
+import { Ether } from '../../ether'
+import formatCoco from '../../../format-coco'
+import listenDeposits from '../../../services/listen-deposits'
+import { RegisterBusinessForm } from './register-business-form'
 
 export const Dashboard = connect(
   (state, ownProps) => {
@@ -21,6 +24,7 @@ export const Dashboard = connect(
     super(props)
     this.state = {
       showBuyModal: false,
+      showRegisterBusinessModal: false,
       buyAmount: 0
     }
   }
@@ -39,7 +43,8 @@ export const Dashboard = connect(
 
   closeModal () {
     this.setState({
-      showBuyModal: false
+      showBuyModal: false,
+      showRegisterBusinessModal: false
     })
   }
 
@@ -54,9 +59,36 @@ export const Dashboard = connect(
       })
   }
 
+  onRegisterBusiness () {
+    this.setState({
+      showRegisterBusinessModal: true
+    })
+  }
+
   render () {
     return (
       <div>
+        <nav className='background-brand navbar' role='navigation' aria-label='main navigation'>
+          <div className="navbar-menu">
+            <div className='navbar-brand'>
+              <a className="navbar-item" href="/">
+                <img src='/images/coco-brand--full-white.png' alt='Coco' />
+              </a>
+            </div>
+            <div className='navbar-end'>
+              <div className='navbar-item'>
+                <div className="field is-grouped">
+                  <p className="control">
+                    <a className='button is-danger is-outlined is-inverted' href='javascript:;' onClick={this.onRegisterBusiness.bind(this)}>
+                      Register Business
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+
         <Modal isOpen={this.state.showBuyModal} onClose={this.closeModal.bind(this)}>
           <div className='box'>
             <h1 className='title'>Buy Coco</h1>
@@ -69,12 +101,20 @@ export const Dashboard = connect(
               </div>
               <div className='field'>
                 <div className='control'>
-                  <input type='submit' value='Buy' className='button is-success'/>
+                  <input type='submit' value='Buy' className='button is-success' />
                 </div>
               </div>
             </form>
           </div>
         </Modal>
+
+        <Modal isOpen={this.state.showBuyModal} onClose={this.closeModal.bind(this)}>
+          <div className='box'>
+            <h1 className='title'>Register Business</h1>
+            <RegisterBusinessForm onSubmit={this.onRegisterBusiness.bind(this)}/>
+          </div>
+        </Modal>
+
         <section className='hero is-bold'>
           <div className="hero-body">
             <div className="container has-text-centered">
