@@ -1,21 +1,20 @@
 import { store } from '../store'
 import cocoContract from '../contracts/coco-contract'
-import getBalance from './get-balance'
+import getAllocationCount from './get-allocation-count'
 
-var depositedEvents;
+var allocationEvents;
 
-export default function listenToDeposits() {
-  if (depositedEvents) {
+export default function listenToAllocations() {
+  if (allocationEvents) {
     return false
   } else {
     cocoContract().deployed().then(instance => {
-      depositedEvents = instance.Deposited()
-      depositedEvents.watch((error, result) => {
+      allocationEvents = instance.AllocationUpdated()
+      allocationEvents.watch((error, result) => {
         if (error) {
           console.error(error)
         } else {
-          var address = result.args.user
-          getBalance(address)
+          getAllocationCount()
           console.log(result)
         }
       })

@@ -15,10 +15,13 @@ import registerBusiness from '../../../services/register-business'
 import newCause from '../../../services/new-cause'
 import getBusinessCount from '../../../services/get-business-count'
 import getCausesCount from '../../../services/get-causes-count'
+import getAllocationCount from '../../../services/get-allocation-count'
 import listenBusinesses from '../../../services/listen-businesses'
+import listenAllocations from '../../../services/listen-allocations'
 import listenCauses from '../../../services/listen-causes'
 import { RegisterBusinessForm } from './register-business-form'
 import { BusinessRow } from './business-row'
+import { AllocationRow } from './allocation-row'
 import { CauseRow } from './cause-row'
 import { NewCauseForm } from './new-cause-form'
 
@@ -27,7 +30,8 @@ export const Dashboard = connect(
     return {
       balance: _.get(state, `accounts[${web3.eth.accounts[0]}].balance`) || 0,
       businessCount: _.get(state, `businesses.count`) || 0,
-      causeCount: _.get(state, `causes.count`) || 0
+      causeCount: _.get(state, `causes.count`) || 0,
+      allocationCount: _.get(state, `allocations.count`) || 0
     }
   }
 )(class extends Component {
@@ -45,9 +49,11 @@ export const Dashboard = connect(
     getBalance(web3.eth.accounts[0])
     getBusinessCount()
     getCausesCount()
+    getAllocationCount()
     listenDeposits()
     listenBusinesses()
     listenCauses()
+    listenAllocations()
   }
 
   onBuy () {
@@ -99,6 +105,20 @@ export const Dashboard = connect(
   }
 
   render () {
+    /*
+
+            <section className='section'>
+              <div className='container'>
+                <table className='table'>
+                  {_.range(this.props.allocationCount.toString()).map((index) => {
+                    return <AllocationRow index={index} key={index} />
+                  })}
+                </table>
+              </div>
+            </section>
+
+*/
+
     return (
       <div>
         <nav className='background-brand navbar' role='navigation' aria-label='main navigation'>

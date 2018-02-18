@@ -41,4 +41,15 @@ contract('Coco', function (accounts) {
       assert.equal(biz[1], 'Bizzy')
     })
   })
+
+  describe('setAllocation()', function () {
+    it('allows the user to set the allocation for a cause', async function () {
+      await coco.newCause('Bizzy', { from: businessAddress })
+      await coco.setAllocation(0, 10)
+      assert.equal(await coco.getAllocationCount(), 1)
+      var alloc = await coco.getAllocation(0)
+      assert.equal(alloc[0], 0)
+      assert.equal(alloc[1], 10)
+    })
+  })
 })
